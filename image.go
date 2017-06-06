@@ -33,7 +33,6 @@ package barcode
 import (
 	"image"
 	"image/draw"
-	"runtime"
 	"unsafe"
 )
 
@@ -79,15 +78,11 @@ func NewImage(src image.Image) *Image {
 		nil,
 	)
 
-	runtime.SetFinalizer(
-		newImage,
-		func(i *Image) {
-			// The image data was allocated by the Go runtime, we
-			// don't want zbar trying to free it
-			C.zbar_image_set_data(newImage.zbarImage, nil, 0, nil)
-			C.zbar_image_destroy(i.zbarImage)
-		},
-	)
-
 	return newImage
+}
+
+// Close desotry a zbarImage and set it's data to nil
+func (i *Image) Close() {
+	C.zbar_image_set_data(i.zbarImage, nil, 0, nil)
+	C.zbar_image_destroy(i.zbarImage)
 }
