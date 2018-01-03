@@ -34,7 +34,6 @@ package barcode
 import (
 	"errors"
 	"image"
-	"runtime"
 )
 
 // #include <zbar.h>
@@ -54,14 +53,21 @@ func NewScanner() *ImageScanner {
 		zbarScanner: C.zbar_image_scanner_create(),
 	}
 
-	runtime.SetFinalizer(
-		scanner,
-		func(s *ImageScanner) {
-			C.zbar_image_scanner_destroy(s.zbarScanner)
-		},
-	)
+	// runtime.SetFinalizer(
+	// 	scanner,
+	// 	func(s *ImageScanner) {
+	// 		C.zbar_image_scanner_destroy(s.zbarScanner)
+	// 	},
+	// )
 
 	return scanner
+}
+
+// Close destroy scanner
+func (s *ImageScanner) Close() {
+	if s.zbarScanner != nil {
+		C.zbar_image_scanner_destroy(s.zbarScanner)
+	}
 }
 
 // ScanImage scans an Image and returns a slice of all Symbols found,
