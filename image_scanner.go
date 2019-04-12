@@ -52,14 +52,6 @@ func NewScanner() *ImageScanner {
 	scanner := &ImageScanner{
 		zbarScanner: C.zbar_image_scanner_create(),
 	}
-
-	// runtime.SetFinalizer(
-	// 	scanner,
-	// 	func(s *ImageScanner) {
-	// 		C.zbar_image_scanner_destroy(s.zbarScanner)
-	// 	},
-	// )
-
 	return scanner
 }
 
